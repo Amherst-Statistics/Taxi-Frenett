@@ -1,0 +1,113 @@
+---
+output: html_document
+---
+
+```{r,include=FALSE}
+library(mosaic)
+library(knitr)
+library(leaflet)
+library(rjson)
+library(RMySQL)
+library(jsonlite)
+
+json_file <- "http://catalog.civicdashboards.com/dataset/11fd957a-8885-42ef-aa49-5c879ec93fac/resource/eec14f19-9794-46ef-9bf4-7f6835ffbf4c/download/a5305aa3500748a2b08a6925302f2eednyczipcodetabulationareas.geojson"
+
+json_data <- fromJSON(paste(readLines(json_file), collapse=""))
+json_data_features <- json_data$features
+json_data_features_properties <- json_data_features$properties
+
+
+```
+
+### Query MySQL for 1 minute and 10 minute data.
+
+```{r}
+con <- dbConnect(MySQL(), dbname = "nyc_taxi", host= "mysql-research.amherst.edu", user="math230", password = "math230pass")
+taxitrips1minute <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-01-04 12:00:00' and '2013-01-04 12:01:00'")
+taxitrips10minute <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-12-25 12:00:00' and '2013-12-25 12:10:00'")
+```
+
+### Points map with 10 minute data.
+
+```{r,eval=FALSE}
+map <- leaflet(data = taxitrips10minute) %>% setView(-73.9,40.71,zoom=11)
+
+map <- map %>% addProviderTiles("MtbMap") %>%
+  addProviderTiles("Stamen.TonerLines",
+                   options = providerTileOptions(opacity = 0.35)
+  ) %>%
+  addProviderTiles("Stamen.TonerLabels")
+
+map <- map %>%
+  addCircleMarkers(
+    lat= ~pickup_latitude,
+    lng= ~pickup_longitude,
+    radius = ~passenger_count,
+    color = "FFA182",
+    stroke = FALSE, fillOpacity = 1,
+    popup = ~pickup_time,
+    popupOptions(zoomAnimation=TRUE)
+  )
+
+```
+
+### Style geojson with a factor in .geojson file.
+
+```{r}
+geojson <- readLines("http://catalog.civicdashboards.com/dataset/11fd957a-8885-42ef-aa49-5c879ec93fac/resource/eec14f19-9794-46ef-9bf4-7f6835ffbf4c/download/a5305aa3500748a2b08a6925302f2eednyczipcodetabulationareas.geojson", warn = FALSE) %>%
+  paste(collapse = "\n") %>%
+  fromJSON(simplifyVector = FALSE)
+
+# Default styles for all features
+geojson$style = list(
+  weight = 1,
+  color = "#555555",
+  opacity = 1,
+  fillOpacity = 0.8
+)
+
+# Gather zipcode from each region
+zip <- sapply(geojson$features, function(feat) {
+  as.numeric(feat$properties$postalCode)
+})
+
+# Color by borough using deciles
+pal <- colorQuantile("Greens", zip, n=10)
+
+# Add a properties$style list to each feature
+geojson$features <- lapply(geojson$features, function(feat) {
+  feat$properties$style <- list(
+    fillColor = pal(
+      as.numeric(feat$properties$postalCode)
+    )
+  )
+  feat
+})
+
+```
+
+### Add styled geojson to 1 minute point map.
+
+```{r}
+map <- leaflet(data=taxitrips1minute) %>% setView(-73.9,40.71,zoom=11) %>% addProviderTiles("MtbMap") %>%
+  addProviderTiles("Stamen.TonerLines",
+                   options = providerTileOptions(opacity = 0.35)
+  ) %>%
+  addProviderTiles("Stamen.TonerLabels") %>%
+  
+  addGeoJSON(geojson)
+
+map <- map %>%
+  addCircles(
+    lat= ~pickup_latitude,
+    lng= ~pickup_longitude,
+    radius = 100,
+    opacity = 0.4,
+    color = "red",
+    stroke = FALSE, fillOpacity = 1,
+    popup = ~pickup_time,
+    popupOptions(zoomAnimation=TRUE)
+  )
+
+map
+```

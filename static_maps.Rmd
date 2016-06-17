@@ -1,0 +1,64 @@
+---
+title: "Static Map Testing"
+author: 'Patrick Frenett'
+date: ''
+output:
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+
+
+```{r, include=FALSE}
+require(mosaic)
+trellis.par.set(theme=theme.mosaic())  
+require(knitr)
+opts_chunk$set(
+  tidy=FALSE,     
+  size="small"
+)
+```
+
+```{r, include=FALSE}
+library(mosaic)
+library(ggmap)
+library(mapproj)
+library(rworldmap)
+library(RMySQL)
+library(knitr)
+library(leaflet)
+library(rjson)
+library(jsonlite)
+```
+
+
+
+```{r}
+con <- dbConnect(MySQL(), dbname = "nyc_taxi", host= "mysql-research.amherst.edu", user="math230", password = "math230pass")
+taxitrips1hour <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-12-25 12:00:00' and '2013-12-25 13:00:00'")
+taxitrips1minute <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-01-04 12:00:00' and '2013-01-04 12:01:00'")
+
+taxitrips1minute <- filter(taxitrips1minute, pickup_longitude!=0)
+taxitrips1minute <- filter(taxitrips1minute, dropoff_longitude!=dropoff_latitude)
+taxitrips1hour <- filter(taxitrips1hour, pickup_longitude!=0)
+
+
+map <- get_map("40.71,-73.9", zoom=11,maptype="terrain",messaging = FALSE,color = c("bw"))
+
+mapPoints<- ggmap(map)+geom_point(aes(x = pickup_longitude, y = pickup_latitude, color = trip_distance), data =taxitrips1hour, alpha = 0.03,size=0.3,color="red")
+
+mapPointsLabels<- ggmap(map)+geom_point(aes(x = pickup_longitude, y = pickup_latitude, color = trip_distance), data = taxitrips1minute, alpha = 0.2,size=1,color="red")+geom_label(data=taxitrips1minute,aes(x = pickup_longitude, y = pickup_latitude, label=vendor_id), color="blue")
+
+mapLines<- ggmap(map)+geom_curve(aes(x = pickup_longitude, y = pickup_latitude, xend = dropoff_longitude, yend = dropoff_latitude),data=taxitrips1minute,color="red",alpha=0.3,curvature = "0.2")+coord_cartesian()
+
+mapLines
+mapPoints
+mapPointsLabels
+```
