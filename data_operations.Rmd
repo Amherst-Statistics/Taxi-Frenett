@@ -1,0 +1,41 @@
+---
+author: "Data Operations for NYC Taxicab"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+****
+
+## Reverse geocoding NYC `long`/`lat` to zip codes
+
+* Import geojson file to QGIS
+    + For this to be done, the file must first be loaded to pgAdmin which will read the json file and then create a geometry column so it can be added/manipulated by PostGIS. A connection between the two pieces of software will have to be made.
+
+* Import point data to pgAdmin
+    + Create a new table and specify the columns of the point data (including `long`/`lat`)
+    + Import .csv file to the table with header
+    
+* Create `location` and `zip` columns
+    + `location` should be saved as public.geometry and `zip` should be a character string of length 5
+    
+* Populate `location` so that it will work with PostGIS
+    + `UPDATE data SET location = ST_SetSRID(ST_MakePoint(longitude, latitude),4326)`
+    + 4326 is the code for WGS 84, the global reference system used in GPS navigation
+    
+* Populate `zip` using PostGIS
+    + `UPDATE data SET zip = zip_codes.postalcode FROM zip_codes WHERE ST_Within(data.location, zip_codes.geom)`
+    
+* Export data to .csv file from pgAdmin
+    + `COPY data TO 'file_location' DELIMITER ',' CSV HEADER`
+    
+****
+
+
