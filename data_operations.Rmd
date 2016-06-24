@@ -1,5 +1,7 @@
 ---
-author: "Data Operations for NYC Taxicab"
+title: "Data Operations for NYC Taxicab"
+author: "Patrick Frenett"
+date: "June 23 2016"
 output: 
   pdf_document:
     fig_height: 3
