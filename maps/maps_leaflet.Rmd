@@ -23,8 +23,13 @@ json_data_features_properties <- json_data_features$properties
 
 ```{r}
 con <- dbConnect(MySQL(), dbname = "nyc_taxi", host= "mysql-research.amherst.edu", user="math230", password = "math230pass")
+
 taxitrips1minute <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-01-04 12:00:00' and '2013-01-04 12:01:00'")
+taxitrips1minute <- filter(taxitrips1minute, pickup_longitude!=0)
+
 taxitrips10minute <- dbGetQuery(con, "SELECT * FROM trips WHERE pickup_datetime between '2013-12-25 12:00:00' and '2013-12-25 12:10:00'")
+taxitrips10minute <- filter(taxitrips10minute, pickup_longitude!=0)
+
 ```
 
 ### Points map with 10 minute data.

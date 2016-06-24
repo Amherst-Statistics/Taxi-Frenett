@@ -1,0 +1,27 @@
+---
+title: "NYC Taxicabs : Data Proposal"
+author: "Patrick Frenett"
+date: "June 22, 2016"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+This dataset looks at 7 years worth of taxi data from January 2009 to December 2015. The data from 2013 is currently loaded on to the math230 SQL server at http://mysql-research.amherst.edu . That data is found at http://chriswhong.com/open-data/foil_nyc_taxi/ . However this splits the data into two tables for `fares` and `trips` which is not the ideal way of having the data. http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml gives each month's data from '09 to '15 as .csv files in a better format. Here is what needs editing in the database : 
+
+- Delete fares and trips tables from nyc folder in math230 database
+ 
+- Download all of the "yellow" files from http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml for 2009-15
+
+- Compile all 84 month's data into one large .csv file
+
+    - I am currently doing this for the 2015 data for a side project by loading all 12 months for '15 into my local PostgreSQL server and then using `UNION ALL` to tie them together.
+
+- Import the single .csv file to the math230 database 

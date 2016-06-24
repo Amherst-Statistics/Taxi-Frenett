@@ -1,0 +1,3 @@
+fluidPage(
+  plotOutput(outputId = "map")
+)
