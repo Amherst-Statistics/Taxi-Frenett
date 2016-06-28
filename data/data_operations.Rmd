@@ -23,7 +23,8 @@ output:
 
 * Import point data to pgAdmin
     + Create a new table and specify the columns of the point data (including `long`/`lat`)
-    + Import .csv file to the table with header
+    + `
+COPY table FROM 'file\path.csv' CSV HEADER;`
     
 * Create `location` and `zip` columns
     + `location` should be saved as public.geometry and `zip` should be a character string of length 5
