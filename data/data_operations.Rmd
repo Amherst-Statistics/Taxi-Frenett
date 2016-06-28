@@ -41,4 +41,41 @@ COPY table FROM 'file\path.csv' CSV HEADER;`
     
 ****
 
+## Updated code for above.
+
+* Create table with correct columns.
+
+`COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-01.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-02.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-03.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-04.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-05.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-06.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-07.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-08.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-09.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-10.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-11.csv' CSV HEADER;
+COPY data_2009 FROM 'C:\Users\pfrenett19\Desktop\NYC_taxi\data\data_2009\yellow_tripdata_2009-12.csv' CSV HEADER;
+
+ALTER TABLE data_2009 ADD pickup_location geometry;
+ALTER TABLE data_2009 ADD dropoff_location geometry;
+ALTER TABLE data_2009 ADD pickup_zip CHAR(5);
+ALTER TABLE data_2009 ADD dropoff_zip CHAR(5);
+
+UPDATE data_2009 SET pickup_location = ST_SetSRID(ST_MakePoint(pickup_longitude, pickup_latitude),4326);
+UPDATE data_2009 SET dropoff_location = ST_SetSRID(ST_MakePoint(dropoff_longitude, dropoff_latitude),4326);
+
+UPDATE data_2009 SET pickup_zip = zip_codes.postalcode FROM zip_codes WHERE ST_Within(data_2009.pickup_location, zip_codes.geom)
+UPDATE data_2009 SET dropoff_zip = zip_codes.postalcode FROM zip_codes WHERE ST_Within(data_2009.dropoff_location, zip_codes.geom)`
+
+
+
+
+
+
+
+
+
+
 
