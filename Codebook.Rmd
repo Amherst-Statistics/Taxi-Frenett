@@ -1,0 +1,61 @@
+---
+title: "R Codebook for NYC Taxicab Dataset"
+author: "Patrick Frenett"
+date: "June 29 2016"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+This document intends to give a brief overview of the NYC taxicab dataset. The data can be found [here](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml). To give a sense of the scale of the dataset, it contains every yellow and green taxi ride made in NYC from January 2009 to December 2015. With ~11-13 million rides per month and ~150 million rides per year, this puts the dataset at just over 1 billion entries. 
+
+"The data was collected and provided to the NYC Taxi and Limousine Commission (TLC) by technology providers authorized under the Taxicab & Livery Passenger Enhancement Programs (TPEP/LPEP). The  trip data was not created by the TLC, and TLC makes no representations as to the accuracy of these data."* [NYC Taxi and Limousine Comission](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
+
+Due to the longevity of the collection process, the variables used in the tables changed in some of the years between 2009-15. Below is a description of each of the variables used, as well as which years they were in use.
+
+##The Variables
+
+- **`VendorID`** : A binary factor (1 or 2) which specifies the TPEP provider that the ride was logged under. 1 = Creative Mobile Technologies, LLC. 2 = VeriFone Inc.
+
+- **`tpep_pickup_datetime`** : The date and time (MM/DD/YYYY HR:MM) at which the passenger(s) begun their journey.
+
+- **`tpep_pickup_datetime`** : The date and time (MM/DD/YYYY HR:MM) at which the passenger(s) begun their journey.
+
+- **`passenger_count`** : The number of passengers on the trip.
+
+- **`trip_distance`** : The distance, in miles, of the trip as displayed by the meter. 
+
+- **`pickup_longitude`** :  The longitude of the pickup location. Collecting using GPS and the global referencing system WGS 84.
+
+- **`pickup_latitude`** : The latitude of the pickup location. Collecting using GPS and the global referencing system WGS 84.
+
+- **`RatecodeID`** : The rate code in effect for the trip. 1 = Standard rate, 2 = JFK, 3 = Newark, 4 = Nassau or Westchester, 5 = Negotiated fare, 6 = Group ride.
+
+- **`store_and_fwd_flag`** : Whether the trip was 'stored and forwarded' or not (Y/N). This occurs when the driver does not have connection so has to store the trip locally and declare it later.
+
+- **`dropoff_longitude`** :  The longitude of the dropoff location. Collecting using GPS and the global referencing system WGS 84.
+
+- **`dropoff_latitude`** : The latitude of the dropoff location. Collecting using GPS and the global referencing system WGS 84.
+
+- **`payment_type`** : A code (1-6) signifying how the trip was paid for. 1 = Credit card, 2 = Cash, 3 = No charge, 4 = Dispute, 5 = Unknown, 6 = Voided trip.
+
+- **`fare_amount`** : The amount charged by the meter in dollars.
+
+- **`extra`** : The extra, in dollars, charged for the trip. This includes the $1.00 overnight charge and the $0.50 rush hour charge.
+
+- **`mta_tax`** : MTA state surcharge. $0.50 for all trips that end in New York City or Nassau, Suffolk, Westchester, Rockland, Dutchess, Orange or Putnam Counties.
+
+- **`tip_amount`** : Tip given in dollars. Cash tips not included.
+
+- **`tolls_amount`** : Amount paid, in dollars, to tolls during the trip.
+
+- **`improvement_surcharge`** : $0.30 improvement surcharge to pay for accessible taxis.
+
+- **`total_amount`** : Total amount paid for the trip, in dollars.
