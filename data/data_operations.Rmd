@@ -1,7 +1,7 @@
 ---
 title: "Data Operations for NYC Taxicab"
 author: "Patrick Frenett"
-date: "June 23 2016"
+date: "July 2 2016"
 output: 
   pdf_document:
     fig_height: 3
@@ -15,6 +15,32 @@ output:
 ---
 
 ****
+
+## Formatting 2009-2014 data
+
+* For the years 2009-2014, PostgreSQL has a hard time reading it in. This is due to two reasons : 
+    + The files contain 'invisible' characters that don't read into SQL.
+    + Line 2 is blank.
+    
+*   + To clean up unwanted characters
+    + To be run on Windows PERL client OR Mac OS Terminal :
+    + `perl -pi.bak -e 's/[\000-\007\013-\037\177-\377]//g;' document.csv`
+    
+*   + To skip the 2nd row
+    + Create a file named skipper.pl with contents: 
+    `#!/usr/bin/perl -w
+
+use strict;
+
+my $line_to_skip = 2;
+my $i = 0;
+
+while(<>) {
+    print if ++$i != $line_to_skip;
+}`
+    + To be run on Windows PERL client OR Mac OS Terminal :
+    + `perl skipper.pl data.csv > other.csv`
+    
 
 ## Reverse geocoding NYC `long`/`lat` to zip codes
 
@@ -68,7 +94,6 @@ UPDATE data_2009 SET dropoff_location = ST_SetSRID(ST_MakePoint(dropoff_longitud
 
 UPDATE data_2009 SET pickup_zip = zip_codes.postalcode FROM zip_codes WHERE ST_Within(data_2009.pickup_location, zip_codes.geom)
 UPDATE data_2009 SET dropoff_zip = zip_codes.postalcode FROM zip_codes WHERE ST_Within(data_2009.dropoff_location, zip_codes.geom)`
-
 
 
 
