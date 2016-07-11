@@ -60,7 +60,7 @@ decodeLine <- function(encoded){
 }
 
 
-
+### CREDIT FOR POLYLINE FUNCTION : http://s4rdd.blogspot.com/2012/12/google-maps-api-decoding-polylines-for.html
 
 
 
