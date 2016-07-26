@@ -1,0 +1,57 @@
+---
+title: "Codebook for Aggregated Tables"
+author: "Patrick Frenett"
+date: "22 July 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This document provides information for the various table aggregated from the NYC taxicab data.
+
+## data_2015_by_doy : 2015 Data Grouped by Day of the Year
+
+- `doy` : Day of the year (0-364)
+- `count` : Number of trips
+- `avg_trip_time` : Average trip time in minutes
+- `avg_trip_distance` : Average trip distance in miles
+- `avg_total_amount` : Average* total cost of the trip in USD (including tip)
+- `avg_tip_amount` : Average* tip given in USD
+
+`* only credit card trips were aggregated for these columns as cash tips were not recorded`
+
+## data_2015_by_hour : 2015 Data Grouped by Hour of the Day
+
+- `hour` : Hour of the day (0-23)
+- `count` : Number of trips
+- `avg_trip_time` : Average trip time in minutes
+- `avg_trip_distance` : Average trip distance in miles
+- `avg_total_amount` : Average* total cost of the trip in USD (including tip)
+- `avg_tip_amount` : Average* tip given in USD
+
+* only credit card trips were aggregated for these columns as cash tips were not recorded
+
+## data_2015_by_zip_pickup :  2015 Data Grouped by Pickup Zip Code
+
+- `pickup_zip` : Pickup zip code
+- `count` : Number of trips
+- `avg_trip_time` : Average trip time in minutes
+- `avg_trip_distance` : Average trip distance in miles
+- `avg_total_amount` : Average* total cost of the trip in USD (including tip)
+- `avg_tip_amount` : Average* tip given in USD
+
+`* only credit card trips were aggregated for these columns as cash tips were not recorded`
+
+## data_2015_by_zip_dropoff :  2015 Data Grouped by Dropoff Zip Code
+
+- `dropoff_zip` : Dropoff zip code
+- `count` : Number of trips
+- `avg_trip_time` : Average trip time in minutes
+- `avg_trip_distance` : Average trip distance in miles
+- `avg_total_amount` : Average* total cost of the trip in USD (including tip)
+- `avg_tip_amount` : Average* tip given in USD
+
+`* only credit card trips were aggregated for these columns as cash tips were not recorded`
+

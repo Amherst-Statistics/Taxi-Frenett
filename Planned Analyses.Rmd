@@ -112,6 +112,15 @@ Another approach would be to group each zip code by borough and then run an ANOV
 
 ### 2.b How closely correlated is the average tip given with demographic information such as average income or age?
 
+```{r}
+censusdata <- read.csv("http://www.frenett.net/nyc/data/censusdata.csv")
+xyplot(tips ~ log(hhincome), data = censusdata, type = c("p", "r"))
+lm <- lm(tips ~ log(hhincome), data = censusdata)
+plot(lm)
+summary(lm)
+```
+
+
 ### 2.c How does the average tip given vary across the day and year?
 
 <center> <h4>PostgreSQL Queries</h4> </center>
@@ -203,8 +212,7 @@ dat <- mutate(dat, X.doy.avg_tip = as.character(X.doy.avg_tip))
 dat <- strsplit(dat$X.doy.avg_tip, ",")
 dat <- unlist(dat)
 dat <- dat[seq(3, length(dat), 3)]
-dat <- data.frame(doy = 1:365, avg_tip = dat)
-dat <- mutate(dat, avg_tip = as.numeric(avg_tip))
+dat <- data.frame(doy = 1:365, avg_tip = as.numeric(dat))
 
 #turn doy to date
 dat$date <- as.Date(dat$doy,"%Y-%m-%d", origin = "2014-12-31", tz = "EST")

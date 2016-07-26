@@ -1,0 +1,55 @@
+---
+title: "Analyses of 2015 NYC Taxicab Data"
+author: "Patrick Frenett"
+date: "22 July 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(mosaic)
+library(zoo)
+```
+
+Analyses of the 2015 NYC Taxicab Data as part of the 2016 SURF research fellowship under the direction of Professor N J Horton of Amherst College.
+
+## Introduction
+
+These analyses look at the 2015 data published by The New York City Taxi and Limousine Commission which, since January 2009, have been periodically publishing ride information including trip times, locations, payments, and making this information freely available. Currently (July '16), over one billion indivual taxi rides have been made available, with over 150 million rides in 2015.
+
+Due to the size of this dataset, it is a perfect example of a medium sized dataset that can be manipulated and aggregated to allow it to be brought into the classroom. This requires use of relational database software such as SQLite, MySQL or PostgreSQL - for this project PostgreSQL was chosen for it's robustness.
+
+The first main challenge of the project was to group the data by a suitable geographic parition. Using the 250 or so zip codes areas in NYC gives a good number of observations per group without making the analyses too broad if, say, boroughs were used. This makes the by-area analyses meaningful and specific.
+
+The raw data given by the NYC TLC simply gives latitudes and longitudes collected from GPS recivers inside the taxi before and after each trip. Reverse geocoding (the process of converting lat/long cooridinates into meaningful street addresses) over a billion trips was a real challenge. The `ggmap` package in R will do this for you, using Google's free API service to do so. However this has a limit of 2500 queries per day and can take around ~0.5 seconds/result which obviously wouldn't work with this dataset. Instead PostGIS, a spatial extention of PostGIS was used. In PostGIS, a zip code map of 262 zip code polygons was created and then the latitudes/longitudes were simply checked to see which polygon they were within. This was the almost infinitely faster solution and allowed the zip codes to be analysed at a high volume. More information and specific details of this process can be found at https://r.amherst.edu/apps/pfrenett19/nyc-taxi/ under the 'PostgreSQL Data Wrangling' tab.
+
+
+
+## Analyses
+
+### Univariate Analysis of number of trips in 2015
+
+To familiarize ourselves with the dataset, a univariate analysis of the number of trips per day is a good place to start. The `data_2015_by_doy` table gives the number of trips, as well as a few other aggregated variables such as average trip time for each day of the year in 2015. Below is a histogram of the `count` variable.
+
+```{r}
+doydata <- read.csv("data/Aggregated Tables/data_2015_by_doy.csv")
+histogram(~ count, data = doydata, type = "count",
+          width = 25000, center = 25000/2,
+          xlab = "# of Trips", ylab = "# of Days")
+```
+
+From this we see a fairly symmetric distribution of trips around the mean of 400,000 trips/day. There are, however, what seems to be a few values with far fewer trips/day (less than 200,000). The `filter` function from the `dplyr` package will identify these days of the year and then `as.Date` from the `zoo` package will convert the days of the year into easy to read dates.
+
+```{r}
+filter(doydata, count < 200000)
+as.Date(c(27, 359),"%Y-%m-%d", origin = "2014-12-31", tz = "EST")
+```
+
+From this result we see that the two days with far fewer trips per day were January 27th and December 25th with 135,500 and 188,254 trips respectively. Christmas Day is hardly surprising and anyone from New England will find it hard to forget Snowstorm Juno that battered the East Coast for two days in January 2015.
+
+If the search is extended to those days with fewer than 250,000 trips/day we see January 26th (the other day of the storm), November 26th (Thanksgiving Day) and December 26th are added to the list, showing how responsive the NYC taxi system is to natural events and public holidays.
+
+
+
+
+
